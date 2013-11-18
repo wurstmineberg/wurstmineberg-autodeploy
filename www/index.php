@@ -62,9 +62,10 @@ function handle_payload($payload)
   $rep = $payload['repository'];
 
   if (in_array($rep['name'], $config['repositories'])  // repository is registered for auto deploy...
-  &&  in_array($rep['owner']['name'], $config['repositories'][$rep["name"]])) // ...and owner is valid
+  &&  in_array($rep['owner']['name'], $config['repositories'][$rep['name']])) // ...and owner is valid
   {
-    $gearman->addTaskBackground(sprintf('deploy.%s', trim($rep['name'])), 'no_workload');
+    $gearman->addTaskBackground('deploy',
+      array('repositoryName' => $rep['name'], 'notifier' => $rep['owner']['name']));
   } else no_way();
 
   $gearman->runTasks();

@@ -6,6 +6,11 @@
     "mcmap": ["wurstmineberg"],
     "init-minecraft": ["wurstmineberg"]
   },
+  "branchCopies":
+  {
+    "wurstmineberg-web": ["dev"],
+    "mcmap": ["rewrite"]
+  },
   "cloneLocation": "/opt/wurstmineberg/auto-deploy"
 }
 
