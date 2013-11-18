@@ -25,7 +25,7 @@
  * @author Stefan Graupner <stefan.graupner@gmail.com>
  **/
 
-$gearman = null;
+chdir(dirname(__FILE__));
 handle_request();
 
 function handle_request()
@@ -54,18 +54,17 @@ function no_way()
 
 function handle_payload($payload)
 {
-  chdir(dirname(__FILE__));
-  $config = json_decode(file_get_contents('../config.json');
+  $config = json_decode(file_get_contents('../config.json'), true);
 
   $gearman = new GearmanClient();
   $gearman->addServer('127.0.0.1', '4730');
 
   $rep = $payload['repository'];
 
-  if (in_array($rep['name'], $config['repositories']  // repository is registered for auto deploy...
-  &&  in_array($config['owners'], $rep['owner']['name'])) // ...and owner is valid
+  if (in_array($rep['name'], $config['repositories'])  // repository is registered for auto deploy...
+  &&  in_array($rep['owner']['name'], $config['repositories'][$rep["name"]])) // ...and owner is valid
   {
-    $gearman->addTaskBackground(sprintf('deploy.%s', trim($rep['name']), 'no_workload');
+    $gearman->addTaskBackground(sprintf('deploy.%s', trim($rep['name'])), 'no_workload');
   } else no_way();
 
   $gearman->runTasks();

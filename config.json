@@ -1,0 +1,11 @@
+{
+  "repositories":
+  {
+    "wurstmineberg-web": ["wurstmineberg"],
+    "wurstmineberg-autodeploy": ["wurstmineberg", "eFrane"],
+    "mcmap": ["wurstmineberg"],
+    "init-minecraft": ["wurstmineberg"]
+  },
+  "cloneLocation": "/opt/wurstmineberg/auto-deploy"
+}
+
