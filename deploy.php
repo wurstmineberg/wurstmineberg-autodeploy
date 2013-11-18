@@ -9,26 +9,29 @@ $worker->addFunction('deploy', function($job)
   $config = json_decode(file_get_contents('../config.json'));
 
   $wl = $job->workload();
+
   $reponame = $wl['repositoryName'];
   $user = $wl['notifier'];
 
-  // clone/update to <clonedir>/firstGHUser/reponame
+  // clone/update to <clonedir>/reponame
 
-  $repodir = sprintf("%s/%s/%s", $config['cloneLocation'], $config['repositories'][$reponame][0], $reponame);
-  
+  $repodir = sprintf("%s/%s", $config['cloneLocation'], $reponame);
+
   if (!is_dir($repodir))
   {
     // clone and setup all remotes
     exec("git clone {$reponame} {$repodir}");
-    
-    if (count($config['repositories'][$reponame]) > 1)
+
+    $remotes = array_filter($config['whitelist'], function ($el) use ($reponame)
     {
-      foreach ($config['repositories'][$reponame] as $user)
-        exec("git remote add {$user} https://github.com/{$user}/{$reponame}.git");
-    }
+      return @strcmp($el, '*') == 0 || in_array($reponame, $el);
+    });
+
+    foreach ($remotes as $remote)
+      exec("git remote add {$remote} https://github.com/{$remote}/{$reponame}.git");
   } else
   {
-    // update remotes and rebase branches, note that this should  not depend on the implicit origin remote!
+    // update remotes
     chdir($repodir);
     exec("git remote update");
     exec("git branch -r --no-merge", $branches);
@@ -50,7 +53,8 @@ $worker->addFunction('deploy', function($job)
     $branchCopies = $config['branchCopies'][$reponame];
     foreach ($branchCopies as $copy)
     {
-      $copyDir = sprintf("%s/branches/%s-%s", $config['cloneLocation'], $reponame, $copy);
+      $copyDir = sprintf("%s/branches/%s/%s", $config['cloneLocation'], $reponame, $copy);
+      exec("mkdir -p {$copyDir}");
 
       exec("git checkout {$copy}");
       exec("rsync -az --exclude=.git . {$copy}/");

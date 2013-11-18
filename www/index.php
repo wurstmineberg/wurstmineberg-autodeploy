@@ -56,17 +56,23 @@ function handle_payload($payload)
 {
   $config = json_decode(file_get_contents('../config.json'), true);
 
-  $gearman = new GearmanClient();
-  $gearman->addServer('127.0.0.1', '4730');
+  $repositoryName = $payload['repository']['name'];
+  $owner          = $payload['repository']['owner']['name'];
 
-  $rep = $payload['repository'];
-
-  if (in_array($rep['name'], $config['repositories'])  // repository is registered for auto deploy...
-  &&  in_array($rep['owner']['name'], $config['repositories'][$rep['name']])) // ...and owner is valid
+  if (in_array($owner, $config['whitelist'])
+  && ((@strcmp($config['whitelist'][$owner], '*') == 0)
+  || in_array($repositoryName, $config['whitelist'][$owner])))
   {
-    $gearman->addTaskBackground('deploy',
-      array('repositoryName' => $rep['name'], 'notifier' => $rep['owner']['name']));
-  } else no_way();
+    $gearman = new GearmanClient();
+    $gearman->addServer('127.0.0.1', '4730');
 
-  $gearman->runTasks();
+    $gearman->addTaskBackground('deploy',
+      array(
+        'repositoryName' => $repositoryName,
+        'notifier' => $owner
+      )
+    );
+
+    $gearman->runTasks();
+  } else no_way();
 }

@@ -1,16 +1,13 @@
 {
-  "repositories":
+  "whitelist":
   {
-    "wurstmineberg-web": ["wurstmineberg"],
-    "wurstmineberg-autodeploy": ["wurstmineberg", "eFrane"],
-    "mcmap": ["wurstmineberg"],
-    "init-minecraft": ["wurstmineberg"]
-  },
+    "wurstmineberg": "*"
+  }
   "branchCopies":
   {
     "wurstmineberg-web": ["dev"],
     "mcmap": ["rewrite"]
   },
-  "cloneLocation": "/opt/wurstmineberg/auto-deploy"
+  "cloneLocation": "/opt/wurstmineberg/auto-deploy-test"
 }
 
