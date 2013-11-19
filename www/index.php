@@ -42,6 +42,7 @@ function handle_request()
   // check payload array structure
   $payload = json_decode($_POST['payload'], true);
 
+  store_payload($payload);
   handle_payload($payload);
 }
 
@@ -50,6 +51,18 @@ function no_way()
   header('HTTP/1.1 301 Moved Permanently');
   header('Location: http://wurstmineberg.de/');
   exit();
+}
+
+function store_payload($payload)
+{
+  if (file_exists('statistics.json') && is_writable('statistics.json'))
+  {
+    $c = file_get_contents('statistics.json');
+    $statistics = (strlen($c) == 0) ? array() : json_decode($c, true);
+
+    if (count($statistics) == 50) array_shift($statistics);
+    $statistics[] = $payload;
+  }
 }
 
 function handle_payload($payload)

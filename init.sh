@@ -1,4 +1,9 @@
 #!/bin/sh
+# this script must be run as root
+
+cd $(dirname $0)
+touch www/statistics.json
+chmod +rwx www/statistics.json
 
 # configure user to the user under which the deploy system runs
 # this will also be the user that owns all the git repositories
