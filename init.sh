@@ -9,8 +9,8 @@ user=updater
 echo "[program:wurstmineberg-auto-deploy)]\n"\
      "command=$(pwd)/deploy.php\n"\
      "autostart=true\n"\
-     "autorestart=true\n"\
+     "autorestart=unexpected\n"\
      "user=$user\n"\
-     "directory=$(pwd)/deploy.php\n" \
+     "directory=$(pwd)/\n" \
 | sed -e 's/^ *//g' -e 's/ *$//g' \
-> supervisord.conf
+> autodeploy_supervisord.conf
