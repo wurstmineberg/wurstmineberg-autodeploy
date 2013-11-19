@@ -30,17 +30,9 @@ handle_request();
 
 function handle_request()
 {
-  // request must not have any get parameters
-  if (count($_GET) > 0) no_way();
+  parse_str(file_get_contents('php://input'));
 
-  // request must have only one post parameter
-  if (count($_POST) == 0 || count($_POST) > 1) no_way();
-
-  // post parameter must be named payload
-  if (count($_POST) == 1 && !isset($_POST['payload'])) no_way();
-
-  // check payload array structure
-  $payload = json_decode($_POST['payload'], true);
+  $payload = json_decode($payload, true);
 
   store_payload($payload);
   handle_payload($payload);
@@ -62,6 +54,9 @@ function store_payload($payload)
 
     if (count($statistics) == 50) array_shift($statistics);
     $statistics[] = $payload;
+
+
+    file_put_contents('statistics.json', json_encode($statistics));
   }
 }
 
