@@ -1,1 +1,4 @@
-supervisord.conf
+autodeploy_supervisord.conf
+www/statistics.json
+
+
